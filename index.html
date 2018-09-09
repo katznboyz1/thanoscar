@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<head>
+    <title>Harrison's mini game</title>
+</head>
+<body>
+    <img src = './images/thanoscargamelogo.png' style = 'width:800px;height:auto;'/>
+    <div id = 'gamediv' style = 'width:800px;height:auto;font-family:Arial, Helvetica, sans-serif'>
+        <p id = 'score' style = 'position:absolute;left: 10px;top: 180px;'>Stones: 0</p>
+        <p id = 'debug1' style = 'position:absolute;left: 10px;top: 200px;'>thanosCarY: 50</p>
+        <canvas id = 'gamescreen' style = 'border: 1px solid black;width:800px;height:550px;'></canvas>
+        <textarea onkeydown = 'if (event.keyCode == 38) {
+            thanosCarY -= 3;
+        } else if (event.keyCode == 40) {
+            thanosCarY += 3;
+        } else {
+            document.getElementById("inputArea").value = "";
+        }' id = 'inputArea' placeholder = 'Click in here to control the game.' style = 'height:18px;width:796px;font-family:Arial, Helvetica, sans-serif;font-size:16px;'></textarea>
+        <p style = 'font-family: Verdana, Geneva, Tahoma, sans-serif'>
+            <b>Instructions:</b><br>
+            The up arrow makes the car go up<br>
+            The down arrow makes the car go down<br>
+            Your objective is to gather as many infinty stones as you can<br>
+            Your score can be seen in the top left corner<br>
+            This entire webpage is a joke but seriously, this is the first online game I've ever made<br>
+        </p>
+        <script>
+            const canvas = document.getElementById('gamescreen')
+            const ctx = canvas.getContext('2d');
+            
+            if (document.cookie == '') {
+                document.cookie = 0;
+            }
+
+            var thanosCarY = 50;
+
+            var dnkey = false;
+            var upkey = false;
+
+            var debug = true;
+
+            function randomYval() {
+                var rand = JSON.stringify(Math.random())[2];
+                var properY = canvas.height / rand;
+                if (properY == Infinity) {
+                    properY = 30;
+                }
+                return properY;
+            }
+
+            function image(src, x, y, width, height) {
+                var img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, x, y, width, height);
+                }
+                img.src = src;
+            }
+
+            var infinitystones = {'red':[0, randomYval()], 'purple':[0, randomYval()], 'green':[0,randomYval()]}
+
+            var main = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (upkey) {
+                    thanosCarY += 1;
+                }
+                if (dnkey) {
+                    thanosCarY -= 1;
+                }
+                document.getElementById('score').innerText = ('Stones: ' + document.cookie);
+                if (debug) {
+                    document.getElementById('debug1').innerText = ('thanosCarY: ' + thanosCarY);
+                }
+                if (thanosCarY > 125) {
+                    thanosCarY = 125;
+                } else if (thanosCarY < -16) {
+                    thanosCarY = -16;
+                }
+                image('./images/thanoscar.png', 200, thanosCarY, 100, 40);
+                image('./images/greeninfinitystone.png', infinitystones['green'][0], infinitystones['green'][1], 10, 10);
+                image('./images/redinfintystone.png', infinitystones['red'][0], infinitystones['red'][1], 10, 10);
+                image('./images/purpleinfinitystone.png', infinitystones['purple'][0], infinitystones['purple'][1], 10, 10);
+                infinitystones['green'][0]++;
+                infinitystones['red'][0]++;
+                infinitystones['purple'][0]++;
+                if (infinitystones['purple'][0] > 185) {
+                    infinitystones['purple'][0] = 0;
+                    infinitystones['purple'][1] = randomYval();
+                    if (Math.abs((infinitystones['purple'][1] - thanosCarY)) < 40) {
+                        document.cookie++;
+                    }
+                }
+                if (infinitystones['green'][0] > 190) {
+                    infinitystones['green'][0] = 0;
+                    infinitystones['green'][1] = randomYval();
+                    if (Math.abs((infinitystones['green'][1] - thanosCarY)) < 40) {
+                        document.cookie++;
+                    }
+                }
+                if (infinitystones['red'][0] > 195) {
+                    infinitystones['red'][0] = 0;
+                    infinitystones['red'][1] = randomYval();
+                    if (Math.abs((infinitystones['red'][1] - thanosCarY)) < 40) {
+                        document.cookie++;
+                    }
+                }
+                requestAnimationFrame(main);
+            }
+
+            main();
+        </script>
+    </div>
+    <!-- If you are looking for codegore, then you got it (r/programmerhumor or r/programmerhorror)-->
+</body>
